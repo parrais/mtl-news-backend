@@ -1,3 +1,4 @@
-# NC News Seeding
+# NC News Seeding (MTL Edition)
 
-- Instructions for this sprint can be found at https://l2c.northcoders.com/courses/be/seeding-nc-news
+- This is Matt Lewis's personal repo for the NC News Seeding challenge.
+- If using this repo, `.env.development` and `.env.test` files will need to be created locally, with `PGDATABASE` set to the correct database (as specified in the `db/setup-dbs.sql` file)
