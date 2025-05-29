@@ -563,7 +563,7 @@ describe("seed", () => {
   });
 });
 
-describe.skip("data insertion", () => {
+describe("data insertion", () => {
   test("topics data has been inserted correctly", () => {
     return db.query(`SELECT * FROM topics;`).then(({ rows: topics }) => {
       expect(topics).toHaveLength(3);
@@ -602,7 +602,7 @@ describe.skip("data insertion", () => {
     });
   });
 
-  test("comments data has been inserted correctly", () => {
+  test.skip("comments data has been inserted correctly", () => {
     return db.query(`SELECT * FROM comments;`).then(({ rows: comments }) => {
       expect(comments).toHaveLength(18);
       comments.forEach((comment) => {
