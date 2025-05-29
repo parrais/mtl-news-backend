@@ -1,6 +1,6 @@
 const db = require("../connection");
 const format = require("pg-format");
-const { convertTimestampToDate } = require("./utils");
+const { convertTimestampToDate, convertArticleToId } = require("./utils");
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -47,11 +47,9 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`);
     })
     .then(() => {
-      const formattedTopics = topicData.map(
-        ({ slug, description, img_url }) => {
-          return [slug, description, img_url];
-        }
-      );
+      const formattedTopics = topicData.map((record) => {
+        return [record.slug, record.description, record.img_url];
+      });
       const TopicInsertString = format(
         `INSERT INTO topics
         (slug, description, img_url)
@@ -61,8 +59,8 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(TopicInsertString);
     })
     .then(() => {
-      const formattedUsers = userData.map(({ username, name, avatar_url }) => {
-        return [username, name, avatar_url];
+      const formattedUsers = userData.map((record) => {
+        return [record.username, record.name, record.avatar_url];
       });
       const UserInsertString = format(
         `INSERT INTO users
@@ -73,30 +71,18 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(UserInsertString);
     })
     .then(() => {
-      const DateCorrectedArticles = articleData.map((record) => {
-        return convertTimestampToDate(record);
+      const formattedArticles = articleData.map((record) => {
+        const correctedRecord = convertTimestampToDate(record);
+        return [
+          correctedRecord.title,
+          correctedRecord.topic,
+          correctedRecord.author,
+          correctedRecord.body,
+          correctedRecord.votes,
+          correctedRecord.created_at,
+          correctedRecord.article_img_url,
+        ];
       });
-      const formattedArticles = DateCorrectedArticles.map(
-        ({
-          title,
-          topic,
-          author,
-          body,
-          votes,
-          created_at,
-          article_img_url,
-        }) => {
-          return [
-            title,
-            topic,
-            author,
-            body,
-            votes,
-            created_at,
-            article_img_url,
-          ];
-        }
-      );
       const ArticleInsertString = format(
         `INSERT INTO articles
         (title, topic, author, body, votes, created_at, article_img_url)
@@ -104,6 +90,26 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         formattedArticles
       );
       return db.query(ArticleInsertString);
+    })
+    .then(({ rows }) => {
+      const formattedComments = commentData.map((record) => {
+        const correctedRecord = convertTimestampToDate(record);
+        const articleId = convertArticleToId(record.article_title, rows);
+        return [
+          articleId,
+          correctedRecord.body,
+          correctedRecord.votes,
+          correctedRecord.author,
+          correctedRecord.created_at,
+        ];
+      });
+      const commentInsertString = format(
+        `INSERT INTO comments
+        (article_id, body, votes, author, created_at)
+        VALUES %L RETURNING *`,
+        formattedComments
+      );
+      return db.query(commentInsertString);
     });
 };
 module.exports = seed;
