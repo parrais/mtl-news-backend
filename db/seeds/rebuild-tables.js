@@ -4,6 +4,9 @@ exports.dropTables = () => {
   return db
     .query(`DROP TABLE IF EXISTS comments;`)
     .then(() => {
+      return db.query(`DROP TABLE IF EXISTS users_articles_votes;`);
+    })
+    .then(() => {
       return db.query(`DROP TABLE IF EXISTS articles;`);
     })
     .then(() => {
@@ -35,7 +38,8 @@ exports.createTables = () => {
       return db.query(`CREATE TABLE users_topics(
       user_topic_id SERIAL PRIMARY KEY,
       username VARCHAR(20) NOT NULL REFERENCES users(username),
-      topic VARCHAR(20) NOT NULL REFERENCES topics(slug));`);
+      topic VARCHAR(20) NOT NULL REFERENCES topics(slug),
+      UNIQUE (username, topic));`);
     })
     .then(() => {
       return db.query(`CREATE TABLE articles(
@@ -47,6 +51,14 @@ exports.createTables = () => {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       votes INT DEFAULT 0,
       article_img_url VARCHAR(1000));`);
+    })
+    .then(() => {
+      return db.query(`CREATE TABLE users_articles_votes(
+      user_article_vote_id SERIAL PRIMARY KEY,
+      username VARCHAR(20) NOT NULL REFERENCES users(username),
+      article_id INT NOT NULL REFERENCES articles(article_id),
+      vote_count INT NOT NULL,
+      UNIQUE (username, article_id));`);
     })
     .then(() => {
       return db.query(`CREATE TABLE comments(

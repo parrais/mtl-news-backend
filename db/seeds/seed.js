@@ -9,6 +9,7 @@ const seed = ({
   articleData,
   commentData,
   userTopicData,
+  userArticleVoteData,
 }) => {
   return dropTables()
     .then(() => {
@@ -43,7 +44,6 @@ const seed = ({
         return [username, topic];
       });
       const UserTopicInsertString = format(
-        // FIX THIS IN BRACKETS
         `INSERT INTO users_topics
                 (username, topic) 
         VALUES %L RETURNING *`,
@@ -91,6 +91,20 @@ const seed = ({
         formattedComments
       );
       return db.query(commentInsertString);
+    })
+    .then(() => {
+      const formattedUsersArticlesVotes = userArticleVoteData.map(
+        ({ username, article_id, vote_count }) => {
+          return [username, article_id, vote_count];
+        }
+      );
+      const UserArticleVoteInsertString = format(
+        `INSERT INTO users_articles_votes
+                (username, article_id, vote_count) 
+        VALUES %L RETURNING *`,
+        formattedUsersArticlesVotes
+      );
+      return db.query(UserArticleVoteInsertString);
     });
 };
 module.exports = seed;
