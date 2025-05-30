@@ -14,3 +14,17 @@ exports.convertArticleToId = (articleName, inputData) => {
   }
   return articleId;
 };
+
+exports.createRef = (inputArray, newKey, newValue) => {
+  if (inputArray.length === 0) {
+    return "No data in input array!";
+  } else if (!(newKey in inputArray[0]) || !(newValue in inputArray[0])) {
+    return "Specified properties not in input array!";
+  } else {
+    const outputObject = {};
+    for (record of inputArray) {
+      outputObject[record[newKey]] = record[newValue];
+    }
+    return outputObject;
+  }
+};

@@ -1,8 +1,8 @@
 const db = require("../connection");
 const format = require("pg-format");
-const { convertTimestampToDate, convertArticleToId } = require("./utils");
+const { convertTimestampToDate, createRef } = require("./utils");
 
-const seed = ({ topicData, userData, articleData, commentData }) => {
+function dropTables() {
   return db
     .query(`DROP TABLE IF EXISTS comments;`)
     .then(() => {
@@ -13,13 +13,17 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
     })
     .then(() => {
       return db.query(`DROP TABLE IF EXISTS topics;`);
-    })
-    .then(() => {
-      return db.query(`CREATE TABLE topics(
+    });
+}
+
+function createTables() {
+  return db
+    .query(
+      `CREATE TABLE topics(
       slug VARCHAR(20) PRIMARY KEY NOT NULL,
       description VARCHAR(100),
-      img_url VARCHAR(1000));`);
-    })
+      img_url VARCHAR(1000));`
+    )
     .then(() => {
       return db.query(`CREATE TABLE users(
       username VARCHAR(20) PRIMARY KEY NOT NULL,
@@ -45,6 +49,13 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       votes INT DEFAULT 0,
       author VARCHAR(20) NOT NULL REFERENCES users(username),
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`);
+    });
+}
+
+const seed = ({ topicData, userData, articleData, commentData }) => {
+  return dropTables()
+    .then(() => {
+      return createTables();
     })
     .then(() => {
       const formattedTopics = topicData.map((record) => {
@@ -92,11 +103,11 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
       return db.query(ArticleInsertString);
     })
     .then(({ rows }) => {
+      const articleLookup = createRef(rows, "title", "article_id");
       const formattedComments = commentData.map((record) => {
         const correctedRecord = convertTimestampToDate(record);
-        const articleId = convertArticleToId(record.article_title, rows);
         return [
-          articleId,
+          articleLookup[correctedRecord.article_title],
           correctedRecord.body,
           correctedRecord.votes,
           correctedRecord.author,
