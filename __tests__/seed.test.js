@@ -155,6 +155,127 @@ describe("seed", () => {
     });
   });
 
+  describe("users_topics table", () => {
+    test("users_topics table exists", () => {
+      return db
+        .query(
+          `SELECT EXISTS (
+            SELECT FROM 
+                information_schema.tables 
+            WHERE 
+                table_name = 'users_topics'
+            );`
+        )
+        .then(({ rows: [{ exists }] }) => {
+          expect(exists).toBe(true);
+        });
+    });
+
+    test("users_topics table has user_topic_id column as a serial", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type, column_default
+            FROM information_schema.columns
+            WHERE table_name = 'users_topics'
+            AND column_name = 'user_topic_id';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("user_topic_id");
+          expect(column.data_type).toBe("integer");
+          expect(column.column_default).toBe(
+            "nextval('users_topics_user_topic_id_seq'::regclass)"
+          );
+        });
+    });
+
+    test("users_topics table has user_topic_id column as the primary key", () => {
+      return db
+        .query(
+          `SELECT column_name
+            FROM information_schema.table_constraints AS tc
+            JOIN information_schema.key_column_usage AS kcu
+            ON tc.constraint_name = kcu.constraint_name
+            WHERE tc.constraint_type = 'PRIMARY KEY'
+            AND tc.table_name = 'users_topics';`
+        )
+        .then(({ rows: [{ column_name }] }) => {
+          expect(column_name).toBe("user_topic_id");
+        });
+    });
+
+    test("users_topics table has topic column as varying character", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_name = 'users_topics'
+            AND column_name = 'topic';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("topic");
+          expect(column.data_type).toBe("character varying");
+        });
+    });
+
+    test("topic column references a slug from the topics table", () => {
+      return db
+        .query(
+          `
+        SELECT *
+        FROM information_schema.table_constraints AS tc
+        JOIN information_schema.key_column_usage AS kcu
+          ON tc.constraint_name = kcu.constraint_name
+        JOIN information_schema.constraint_column_usage AS ccu
+          ON ccu.constraint_name = tc.constraint_name
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+          AND tc.table_name = 'users_topics'
+          AND kcu.column_name = 'topic'
+          AND ccu.table_name = 'topics'
+          AND ccu.column_name = 'slug';
+      `
+        )
+        .then(({ rows }) => {
+          expect(rows).toHaveLength(1);
+        });
+    });
+
+    test("users_topics table has username column as varying character", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_name = 'users_topics'
+            AND column_name = 'username';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("username");
+          expect(column.data_type).toBe("character varying");
+        });
+    });
+
+    test("username column references a username from the users table", () => {
+      return db
+        .query(
+          `
+        SELECT *
+        FROM information_schema.table_constraints AS tc
+        JOIN information_schema.key_column_usage AS kcu
+          ON tc.constraint_name = kcu.constraint_name
+        JOIN information_schema.constraint_column_usage AS ccu
+          ON ccu.constraint_name = tc.constraint_name
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+          AND tc.table_name = 'users_topics'
+          AND kcu.column_name = 'username'
+          AND ccu.table_name = 'users'
+          AND ccu.column_name = 'username';
+      `
+        )
+        .then(({ rows }) => {
+          expect(rows).toHaveLength(1);
+        });
+    });
+  });
+
   describe("articles table", () => {
     test("articles table exists", () => {
       return db
@@ -369,6 +490,140 @@ describe("seed", () => {
           expect(column.column_name).toBe("article_img_url");
           expect(column.data_type).toBe("character varying");
           expect(column.character_maximum_length).toBe(1000);
+        });
+    });
+  });
+
+  describe("users_articles_votes table", () => {
+    test("users_articles_votes table exists", () => {
+      return db
+        .query(
+          `SELECT EXISTS (
+            SELECT FROM 
+                information_schema.tables 
+            WHERE 
+                table_name = 'users_articles_votes'
+            );`
+        )
+        .then(({ rows: [{ exists }] }) => {
+          expect(exists).toBe(true);
+        });
+    });
+
+    test("users_articles_votes table has user_article_vote_id column as a serial", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type, column_default
+            FROM information_schema.columns
+            WHERE table_name = 'users_articles_votes'
+            AND column_name = 'user_article_vote_id';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("user_article_vote_id");
+          expect(column.data_type).toBe("integer");
+          expect(column.column_default).toBe(
+            "nextval('users_articles_votes_user_article_vote_id_seq'::regclass)"
+          );
+        });
+    });
+
+    test("users_articles_votes table has user_article_vote_id column as the primary key", () => {
+      return db
+        .query(
+          `SELECT column_name
+            FROM information_schema.table_constraints AS tc
+            JOIN information_schema.key_column_usage AS kcu
+            ON tc.constraint_name = kcu.constraint_name
+            WHERE tc.constraint_type = 'PRIMARY KEY'
+            AND tc.table_name = 'users_articles_votes';`
+        )
+        .then(({ rows: [{ column_name }] }) => {
+          expect(column_name).toBe("user_article_vote_id");
+        });
+    });
+
+    test("users_articles_votes table has username column as varying character", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_name = 'users_articles_votes'
+            AND column_name = 'username';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("username");
+          expect(column.data_type).toBe("character varying");
+        });
+    });
+
+    test("username column references a username from the users table", () => {
+      return db
+        .query(
+          `
+        SELECT *
+        FROM information_schema.table_constraints AS tc
+        JOIN information_schema.key_column_usage AS kcu
+          ON tc.constraint_name = kcu.constraint_name
+        JOIN information_schema.constraint_column_usage AS ccu
+          ON ccu.constraint_name = tc.constraint_name
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+          AND tc.table_name = 'users_articles_votes'
+          AND kcu.column_name = 'username'
+          AND ccu.table_name = 'users'
+          AND ccu.column_name = 'username';
+      `
+        )
+        .then(({ rows }) => {
+          expect(rows).toHaveLength(1);
+        });
+    });
+
+    test("users_articles_votes table has article_id column as integer", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_name = 'users_articles_votes'
+            AND column_name = 'article_id';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("article_id");
+          expect(column.data_type).toBe("integer");
+        });
+    });
+
+    test("article_id column references an article from the articles table", () => {
+      return db
+        .query(
+          `
+        SELECT *
+        FROM information_schema.table_constraints AS tc
+        JOIN information_schema.key_column_usage AS kcu
+          ON tc.constraint_name = kcu.constraint_name
+        JOIN information_schema.constraint_column_usage AS ccu
+          ON ccu.constraint_name = tc.constraint_name
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+          AND tc.table_name = 'users_articles_votes'
+          AND kcu.column_name = 'article_id'
+          AND ccu.table_name = 'articles'
+          AND ccu.column_name = 'article_id';
+      `
+        )
+        .then(({ rows }) => {
+          expect(rows).toHaveLength(1);
+        });
+    });
+    test("users_articles_votes table has vote_count column as integer", () => {
+      return db
+        .query(
+          `SELECT column_name, data_type
+            FROM information_schema.columns
+            WHERE table_name = 'users_articles_votes'
+            AND column_name = 'vote_count';`
+        )
+        .then(({ rows: [column] }) => {
+          expect(column.column_name).toBe("vote_count");
+          expect(column.data_type).toBe("integer");
         });
     });
   });
@@ -600,6 +855,33 @@ describe("data insertion", () => {
         expect(article).toHaveProperty("article_img_url");
       });
     });
+  });
+
+  test("users_topics data has been inserted correctly", () => {
+    return db
+      .query(`SELECT * FROM users_topics;`)
+      .then(({ rows: usersTopics }) => {
+        expect(usersTopics).toHaveLength(6);
+        usersTopics.forEach((userTopic) => {
+          expect(userTopic).toHaveProperty("user_topic_id");
+          expect(userTopic).toHaveProperty("username");
+          expect(userTopic).toHaveProperty("topic");
+        });
+      });
+  });
+
+  test("users_articles_votes data has been inserted correctly", () => {
+    return db
+      .query(`SELECT * FROM users_articles_votes;`)
+      .then(({ rows: usersArticlesVotes }) => {
+        expect(usersArticlesVotes).toHaveLength(22);
+        usersArticlesVotes.forEach((userArticleVote) => {
+          expect(userArticleVote).toHaveProperty("user_article_vote_id");
+          expect(userArticleVote).toHaveProperty("username");
+          expect(userArticleVote).toHaveProperty("article_id");
+          expect(userArticleVote).toHaveProperty("vote_count");
+        });
+      });
   });
 
   test("comments data has been inserted correctly", () => {
