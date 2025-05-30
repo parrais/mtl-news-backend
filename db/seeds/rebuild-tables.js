@@ -7,6 +7,9 @@ exports.dropTables = () => {
       return db.query(`DROP TABLE IF EXISTS articles;`);
     })
     .then(() => {
+      return db.query(`DROP TABLE IF EXISTS users_topics;`);
+    })
+    .then(() => {
       return db.query(`DROP TABLE IF EXISTS users;`);
     })
     .then(() => {
@@ -29,11 +32,17 @@ exports.createTables = () => {
       avatar_url VARCHAR(1000));`);
     })
     .then(() => {
+      return db.query(`CREATE TABLE users_topics(
+      user_topic_id SERIAL PRIMARY KEY,
+      username VARCHAR(20) NOT NULL REFERENCES users(username),
+      topic VARCHAR(20) NOT NULL REFERENCES topics(slug));`);
+    })
+    .then(() => {
       return db.query(`CREATE TABLE articles(
       article_id SERIAL PRIMARY KEY,
       title VARCHAR(200) NOT NULL,
       topic VARCHAR(20) REFERENCES topics(slug),
-      author VARCHAR(20) REFERENCES users(username),
+      author VARCHAR(20) NOT NULL REFERENCES users(username),
       body TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       votes INT DEFAULT 0,

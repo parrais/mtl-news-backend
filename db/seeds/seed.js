@@ -3,7 +3,13 @@ const format = require("pg-format");
 const { convertTimestampToDate, createRef } = require("./utils");
 const { dropTables, createTables } = require("./rebuild-tables");
 
-const seed = ({ topicData, userData, articleData, commentData }) => {
+const seed = ({
+  topicData,
+  userData,
+  articleData,
+  commentData,
+  userTopicData,
+}) => {
   return dropTables()
     .then(() => {
       return createTables();
@@ -31,6 +37,19 @@ const seed = ({ topicData, userData, articleData, commentData }) => {
         formattedUsers
       );
       return db.query(UserInsertString);
+    })
+    .then(() => {
+      const formattedUsersTopics = userTopicData.map(({ username, topic }) => {
+        return [username, topic];
+      });
+      const UserTopicInsertString = format(
+        // FIX THIS IN BRACKETS
+        `INSERT INTO users_topics
+                (username, topic) 
+        VALUES %L RETURNING *`,
+        formattedUsersTopics
+      );
+      return db.query(UserTopicInsertString);
     })
     .then(() => {
       const formattedArticles = articleData.map((record) => {
