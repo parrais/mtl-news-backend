@@ -1,7 +1,19 @@
 # NC News Seeding (MTL Edition)
 
 - This is Matt Lewis's personal repo for the NC News Seeding challenge.
-- If using this repo, `.env.development` and `.env.test` files will need to be created locally, with `PGDATABASE` set to the correct database (as specified in the `db/setup-dbs.sql` file)
+- If using this repo, `.env` files will need to be created locally (and added to `.gitignore`) as follows:
+
+`.env.development`
+
+```
+PGDATABASE=nc_news
+```
+
+`.env.test`
+
+```
+PGDATABASE=nc_news_test
+```
 
 ## Entity Relationship Diagram
 
