@@ -82,3 +82,30 @@ describe("GET /api/users", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id", () => {
+  test("200: Responds with an article by its id when valid", () => {
+    return request(app)
+      .get("/api/articles/11")
+      .expect(200)
+      .then(({ body }) => {
+        const {
+          author,
+          title,
+          article_id,
+          topic,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.article;
+        const articleBody = body.article.body;
+        expect(typeof author).toBe("string");
+        expect(typeof title).toBe("string");
+        expect(article_id).toBe(11);
+        expect(typeof articleBody).toBe("string");
+        expect(typeof topic).toBe("string");
+        expect(typeof created_at).toBe("string");
+        expect(typeof votes).toBe("number");
+        expect(typeof article_img_url).toBe("string");
+      });
+  });
+});
