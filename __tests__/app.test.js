@@ -38,3 +38,19 @@ describe("GET /api/topics", () => {
       });
   });
 });
+describe("GET /api/users", () => {
+  test("200: Responds with an array of all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users.length).not.toBe(0);
+        users.forEach((users) => {
+          expect(typeof users.username).toBe("string");
+          expect(typeof users.name).toBe("string");
+          expect(typeof users.avatar_url).toBe("string");
+        });
+      });
+  });
+});
