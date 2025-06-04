@@ -1,5 +1,5 @@
 node_modules
 .env.*
-queries.txt
+queries.*
 output-*.txt
 output-*.sql
