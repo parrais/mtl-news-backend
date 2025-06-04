@@ -57,9 +57,11 @@ describe("GET /api/articles", () => {
           expect(typeof article.comment_count).toBe("number");
           expect("body" in article).toBe(false);
         });
-        const sortedDescendingArticles = articles.sort(
-          ({ created_at: a }, { created_at: b }) => b - a
-        );
+        const sortedDescendingArticles = articles.toSorted((a, b) => {
+          dateA = new Date(a.created_at);
+          dateB = new Date(b.created_at);
+          return dateB - dateA;
+        });
         expect(articles).toEqual(sortedDescendingArticles);
       });
   });
