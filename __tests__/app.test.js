@@ -22,6 +22,7 @@ describe("GET /api", () => {
         expect(endpoints).toEqual(endpointsJson);
       });
   });
+  test.todo("Error when not valid endpoint");
 });
 describe("GET /api/topics", () => {
   test("200: Responds with an array of all topics", () => {
@@ -55,7 +56,7 @@ describe("GET /api/articles", () => {
           expect(typeof article.votes).toBe("number");
           expect(typeof article.article_img_url).toBe("string");
           expect(typeof article.comment_count).toBe("number");
-          expect("body" in article).toBe(false);
+          expect(article).not.toHaveProperty("body");
         });
         const sortedDescendingArticles = articles.toSorted((a, b) => {
           dateA = new Date(a.created_at);
@@ -106,6 +107,146 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof created_at).toBe("string");
         expect(typeof votes).toBe("number");
         expect(typeof article_img_url).toBe("string");
+      });
+  });
+  test("400: Responds with an error when passed an invalid ID", () => {
+    return request(app)
+      .get("/api/articles/invalid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("404: Responds with an error when no article of that ID in the database", () => {
+    return request(app)
+      .get("/api/articles/456")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found for article_id: 456");
+      });
+  });
+});
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with an array of all comments on an article when supplied an article ID with comments", () => {
+    return request(app)
+      .get("/api/articles/5/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments.length).not.toBe(0);
+        comments.forEach((comment) => {
+          expect(typeof comment.comment_id).toBe("number");
+          expect(typeof comment.votes).toBe("number");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(comment.article_id).toBe(5);
+        });
+        const sortedDescendingComments = comments.toSorted((a, b) => {
+          dateA = new Date(a.created_at);
+          dateB = new Date(b.created_at);
+          return dateB - dateA;
+        });
+        expect(comments).toEqual(sortedDescendingComments);
+      });
+  });
+  test("400: Responds with an error when passed an invalid article ID", () => {
+    return request(app)
+      .get("/api/articles/invalid/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("404: Responds with an error when no article of that ID in the database", () => {
+    return request(app)
+      .get("/api/articles/456/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "No article or comments found for article_id: 456"
+        );
+      });
+  });
+  test("404: Responds with an error when no comments found for an article that is in the database", () => {
+    return request(app)
+      .get("/api/articles/11/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "No article or comments found for article_id: 11"
+        );
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST - 201: Posts a new comment to an article", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        author: "icellusedkars",
+        body: "This is a new test comment.",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { comment_id, votes, created_at, author, article_id } =
+          body.newComment;
+        const commentBody = body.newComment.body;
+        expect(typeof comment_id).toBe("number");
+        expect(typeof votes).toBe("number");
+        expect(typeof created_at).toBe("string");
+        expect(author).toBe("icellusedkars");
+        expect(commentBody).toBe("This is a new test comment.");
+        expect(article_id).toBe(5);
+      });
+  });
+  test("400: Responds with an error when passed an invalid article ID", () => {
+    return request(app)
+      .post("/api/articles/invalid/comments")
+      .send({
+        author: "icellusedkars",
+        body: "This is a new test comment.",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed an article ID not found in the database", () => {
+    return request(app)
+      .post("/api/articles/456/comments")
+      .send({
+        author: "icellusedkars",
+        body: "This is a new test comment.",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed a user not found in the database", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        author: "notvalid",
+        body: "This is a new test comment.",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed a blank comment", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        author: "icellusedkars",
+        body: "",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input: comment must not be blank");
       });
   });
 });
