@@ -65,9 +65,34 @@ const insertComment = (article_id, body, author) => {
     });
 };
 
+const changeVotes = (article_id, inc_votes) => {
+  if (inc_votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: `Invalid input: no votes received`,
+    });
+  }
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *`,
+      [article_id, inc_votes]
+    )
+    .then(({ rows }) => {
+      const article = rows[0];
+      if (!article) {
+        return Promise.reject({
+          status: 400,
+          msg: `No article found for article_id: ${article_id}`,
+        });
+      }
+      return article;
+    });
+};
+
 module.exports = {
   fetchArticles,
   fetchArticleById,
   fetchCommentsbyArticle,
   insertComment,
+  changeVotes,
 };

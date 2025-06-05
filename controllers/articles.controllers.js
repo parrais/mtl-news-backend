@@ -3,6 +3,7 @@ const {
   fetchArticleById,
   fetchCommentsbyArticle,
   insertComment,
+  changeVotes,
 } = require("../models/articles.models.js");
 
 const getArticles = (request, response) => {
@@ -45,9 +46,22 @@ const postComment = (request, response, next) => {
     });
 };
 
+const patchArticleById = (request, response, next) => {
+  const { article_id } = request.params;
+  const { inc_votes } = request.body;
+  changeVotes(article_id, inc_votes)
+    .then((article) => {
+      response.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
 module.exports = {
   getArticles,
   getArticleById,
   getCommentsbyArticle,
   postComment,
+  patchArticleById,
 };

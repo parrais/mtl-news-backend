@@ -250,3 +250,68 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("PATCH - 201: Updates votes on an article", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: -200 })
+      .expect(201)
+      .then(({ body }) => {
+        const {
+          author,
+          title,
+          article_id,
+          topic,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.article;
+        const articleBody = body.article.body;
+        expect(typeof author).toBe("string");
+        expect(typeof title).toBe("string");
+        expect(article_id).toBe(1);
+        expect(typeof articleBody).toBe("string");
+        expect(typeof topic).toBe("string");
+        expect(typeof created_at).toBe("string");
+        expect(votes).toBe(-100);
+        expect(typeof article_img_url).toBe("string");
+      });
+  });
+  test("400: Responds with an error when passed an article ID not found in the database", () => {
+    return request(app)
+      .patch("/api/articles/456")
+      .send({ inc_votes: 100 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No article found for article_id: 456");
+      });
+  });
+  test("400: Responds with an error when passed an invalid article ID", () => {
+    return request(app)
+      .patch("/api/articles/nothere")
+      .send({ inc_votes: 100 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed an invalid vote total", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ inc_votes: "ballots" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed input without an inc_votes key", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ votes: "100" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input: no votes received");
+      });
+  });
+});
