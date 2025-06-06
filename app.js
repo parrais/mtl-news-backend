@@ -1,6 +1,9 @@
 const express = require("express");
 const app = express();
-const { getEndpoints } = require("./controllers/api.controllers.js");
+const {
+  getEndpoints,
+  respondToInvalidEndpoint,
+} = require("./controllers/api.controllers.js");
 const {
   getArticles,
   getArticleById,
@@ -32,6 +35,8 @@ app.delete("/api/comments/:comment_id", deleteComment);
 app.get("/api/topics", getTopics);
 
 app.get("/api/users", getUsers);
+
+app.use(respondToInvalidEndpoint);
 
 app.use(handleCustomErrors);
 

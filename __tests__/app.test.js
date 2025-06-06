@@ -22,8 +22,24 @@ describe("GET /api", () => {
         expect(endpoints).toEqual(endpointsJson);
       });
   });
-  test.todo("Error when not valid endpoint");
+  test("404: Responds with an error when requesting an invalid endpoint under /api", () => {
+    return request(app)
+      .get("/api/invalid")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Endpoint not found");
+      });
+  });
+  test("404: Responds with an error when requesting an invalid endpoint outside /api", () => {
+    return request(app)
+      .get("/invalid")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Endpoint not found");
+      });
+  });
 });
+
 describe("GET /api/topics", () => {
   test("200: Responds with an array of all topics", () => {
     return request(app)
