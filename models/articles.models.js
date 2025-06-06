@@ -1,18 +1,26 @@
 const db = require("../db/connection");
 
-const fetchArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;`
-    )
-    .then(({ rows }) => {
-      const articles = rows.map((article) => {
-        const correctedArticle = { ...article };
-        correctedArticle.comment_count = Number(article.comment_count);
-        return correctedArticle;
-      });
-      return articles;
+const fetchArticles = (topic) => {
+  const queryParams = [];
+  let queryString =
+    "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id ";
+
+  if (topic) {
+    queryParams.push(topic);
+    queryString += `WHERE topic = $${queryParams.length} `;
+  }
+
+  queryString +=
+    "GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+
+  return db.query(queryString, queryParams).then(({ rows }) => {
+    const articles = rows.map((article) => {
+      const correctedArticle = { ...article };
+      correctedArticle.comment_count = Number(article.comment_count);
+      return correctedArticle;
     });
+    return articles;
+  });
 };
 
 const fetchArticleById = (article_id) => {

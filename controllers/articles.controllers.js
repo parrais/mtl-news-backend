@@ -3,11 +3,25 @@ const {
   fetchArticleById,
   changeVotes,
 } = require("../models/articles.models.js");
+const { fetchTopic } = require("../models/topics.models.js");
 
-const getArticles = (request, response) => {
-  fetchArticles().then((articles) => {
-    response.status(200).send({ articles });
-  });
+const getArticles = (request, response, next) => {
+  const { topic } = request.query;
+
+  const articlesPromises = [fetchArticles(topic)];
+
+  if (topic) {
+    articlesPromises.push(fetchTopic(topic));
+  }
+
+  Promise.all(articlesPromises)
+    .then((articlesPromises) => {
+      const articles = articlesPromises[0];
+      response.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 const getArticleById = (request, response, next) => {

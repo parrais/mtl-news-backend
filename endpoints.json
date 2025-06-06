@@ -10,6 +10,11 @@
   },
   "GET /api/articles": {
     "description": "Serves an array of all articles",
+    "queries": [
+      "sort_by (any valid column, defaults to the created_at date)",
+      "order (asc or desc, defaults to descending)",
+      "topic (defaults to all)"
+    ],
     "exampleResponse": {
       "articles": [
         {

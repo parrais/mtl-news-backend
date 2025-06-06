@@ -82,6 +82,35 @@ describe("GET /api/articles", () => {
         expect(articles).toEqual(sortedDescendingArticles);
       });
   });
+  test("200: Accepts a topic query which responds with only articles of that topic", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("404: Responds with an error message if the topic does not exist", () => {
+    return request(app)
+      .get("/api/articles?topic=notmitch")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Topic does not exist");
+      });
+  });
+  test("200: Returns no results for a valid topic query where topic has no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(0);
+      });
+  });
 });
 describe("GET /api/users", () => {
   test("200: Responds with an array of all users", () => {
