@@ -111,7 +111,95 @@ describe("GET /api/articles", () => {
         expect(articles).toHaveLength(0);
       });
   });
+  test("200: Accepts a sort_by query which responds with sorted results on string field", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].title).toBe("Z");
+        expect(articles[12].title).toBe("A");
+      });
+  });
+  test("200: Accepts a sort_by query which responds with sorted results on string field, ordered descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].title).toBe("Z");
+        expect(articles[12].title).toBe("A");
+      });
+  });
+  test("200: Accepts a sort_by query which responds with sorted results on string field, ordered ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].title).toBe("A");
+        expect(articles[12].title).toBe("Z");
+      });
+  });
+  test("200: Accepts a sort_by query which responds with sorted results on numeric field", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].article_id).toBe(13);
+        expect(articles[12].article_id).toBe(1);
+      });
+  });
+  test("200: Accepts a sort_by query which responds with sorted results on numeric field, ordered descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].article_id).toBe(13);
+        expect(articles[12].article_id).toBe(1);
+      });
+  });
+  test("200: Accepts a sort_by query which responds with sorted results on numeric field, ordered ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].article_id).toBe(1);
+        expect(articles[12].article_id).toBe(13);
+      });
+  });
+  test("200: Accepts a sort_by query which responds with sorted results on numeric field, ordered ascending, with topic", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=asc&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toHaveLength(12);
+        expect(articles[0].article_id).toBe(1);
+        expect(articles[11].article_id).toBe(13);
+      });
+  });
+  test("400: Responds with an error message if the sorting column does not exist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=nothere&order=asc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Input");
+      });
+  });
+  test("400: Responds with an error message if the order method does not exist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id&order=invalid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid Input");
+      });
+  });
 });
+
 describe("GET /api/users", () => {
   test("200: Responds with an array of all users", () => {
     return request(app)

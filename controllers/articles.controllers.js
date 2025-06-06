@@ -6,9 +6,8 @@ const {
 const { fetchTopic } = require("../models/topics.models.js");
 
 const getArticles = (request, response, next) => {
-  const { topic } = request.query;
-
-  const articlesPromises = [fetchArticles(topic)];
+  const { sort_by, order, topic } = request.query;
+  const articlesPromises = [fetchArticles({ sort_by, order, topic })];
 
   if (topic) {
     articlesPromises.push(fetchTopic(topic));
