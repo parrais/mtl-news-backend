@@ -97,5 +97,8 @@
         "article_img_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Clough_and_Taylor_Statue_Derby.JPG"
       }
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes a comment by its id (no content in response)"
   }
 }

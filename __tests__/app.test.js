@@ -315,3 +315,26 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: Responds with no content when deleting a comment", () => {
+    return request(app).delete("/api/comments/14").expect(204);
+  });
+  test("400: Responds with error when passed a bad comment ID", () => {
+    return request(app)
+      .delete("/api/comments/notvalid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with error when passed a non-existent comment ID", () => {
+    return request(app)
+      .delete("/api/comments/9090")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(
+          "Invalid input: no comment to delete with comment_id: 9090"
+        );
+      });
+  });
+});
