@@ -7,13 +7,12 @@ const handleCustomErrors = (err, req, res, next) => {
 };
 
 const handleDatabaseErrors = (err, req, res, next) => {
-  if (
-    err.code === "22P02" ||
-    err.code === "23503" ||
-    err.code === "23502" ||
-    err.code === "23505"
-  ) {
+  if (err.code === "22P02" || err.code === "23502" || err.code === "23505") {
     res.status(400).send({ msg: "Invalid input" });
+  } else if (err.code === "23503") {
+    res
+      .status(404)
+      .send({ msg: "Invalid input: Unable to find matching record" });
   } else {
     next(err);
   }

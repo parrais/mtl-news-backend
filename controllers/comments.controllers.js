@@ -4,11 +4,17 @@ const {
   eraseComment,
   changeCommentVotes,
 } = require("../models/comments.models.js");
+const { fetchArticleById } = require("../models/articles.models.js");
 
 const getCommentsbyArticle = (request, response, next) => {
   const { article_id } = request.params;
-  fetchCommentsbyArticle(article_id)
-    .then((comments) => {
+  const commentsPromises = [fetchCommentsbyArticle(article_id)];
+  if (article_id) {
+    commentsPromises.push(fetchArticleById(article_id));
+  }
+  Promise.all(commentsPromises)
+    .then((commentsPromises) => {
+      const comments = commentsPromises[0];
       response.status(200).send({ comments });
     })
     .catch((err) => {
@@ -18,8 +24,9 @@ const getCommentsbyArticle = (request, response, next) => {
 
 const postComment = (request, response, next) => {
   const { article_id } = request.params;
-  const { body, author } = request.body;
-  insertComment(article_id, body, author)
+  const { body, author } = request.body || { body: "", author: "" };
+  const commentData = { article_id, body, author };
+  insertComment(commentData)
     .then((newComment) => {
       response.status(201).send({ newComment });
     })

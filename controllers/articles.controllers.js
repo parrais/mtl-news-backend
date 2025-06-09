@@ -40,7 +40,7 @@ const patchArticleById = (request, response, next) => {
   const { inc_votes } = request.body;
   changeArticleVotes(article_id, inc_votes)
     .then((article) => {
-      response.status(201).send({ article });
+      response.status(200).send({ article });
     })
     .catch((err) => {
       next(err);

@@ -251,6 +251,7 @@ describe("GET /api/articles/:article_id", () => {
           created_at,
           votes,
           article_img_url,
+          comment_count,
         } = body.article;
         const articleBody = body.article.body;
         expect(typeof author).toBe("string");
@@ -261,6 +262,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(typeof created_at).toBe("string");
         expect(typeof votes).toBe("number");
         expect(typeof article_img_url).toBe("string");
+        expect(typeof comment_count).toBe("number");
       });
   });
   test("400: Responds with an error when passed an invalid ID", () => {
@@ -317,19 +319,17 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/456/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe(
-          "No article or comments found for article_id: 456"
-        );
+        expect(body.msg).toBe("No article found for article_id: 456");
       });
   });
-  test("404: Responds with an error when no comments found for an article that is in the database", () => {
+  test("200: Responds with an empty array when no comments found for an article that is in the database", () => {
     return request(app)
       .get("/api/articles/11/comments")
-      .expect(404)
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe(
-          "No article or comments found for article_id: 11"
-        );
+        const { comments } = body;
+        expect(Array.isArray(comments)).toBe(true);
+        expect(comments.length).toBe(0);
       });
   });
 });
@@ -367,11 +367,35 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test("400: Responds with an error when passed an article ID not found in the database", () => {
+  test("404: Responds with an error when passed an article ID not found in the database", () => {
     return request(app)
       .post("/api/articles/456/comments")
       .send({
         author: "icellusedkars",
+        body: "This is a new test comment.",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input: Unable to find matching record");
+      });
+  });
+  test("404: Responds with an error when passed a user not found in the database", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        author: "notvalid",
+        body: "This is a new test comment.",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input: Unable to find matching record");
+      });
+  });
+  test("400: Responds with an error when passed an invalid user", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        author: ["array"],
         body: "This is a new test comment.",
       })
       .expect(400)
@@ -379,11 +403,10 @@ describe("POST /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test("400: Responds with an error when passed a user not found in the database", () => {
+  test("400: Responds with an error when passed no user", () => {
     return request(app)
       .post("/api/articles/5/comments")
       .send({
-        author: "notvalid",
         body: "This is a new test comment.",
       })
       .expect(400)
@@ -400,17 +423,37 @@ describe("POST /api/articles/:article_id/comments", () => {
       })
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input: comment must not be blank");
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed no comment", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send({
+        author: "icellusedkars",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed no data", () => {
+    return request(app)
+      .post("/api/articles/5/comments")
+      .send()
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
       });
   });
 });
 
 describe("PATCH /api/articles/:article_id", () => {
-  test("PATCH - 201: Updates votes on an article", () => {
+  test("PATCH - 200: Updates votes on an article", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ inc_votes: -200 })
-      .expect(201)
+      .expect(200)
       .then(({ body }) => {
         const {
           author,
@@ -432,11 +475,11 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(typeof article_img_url).toBe("string");
       });
   });
-  test("400: Responds with an error when passed an article ID not found in the database", () => {
+  test("404: Responds with an error when passed an article ID not found in the database", () => {
     return request(app)
       .patch("/api/articles/456")
       .send({ inc_votes: 100 })
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("No article found for article_id: 456");
       });
@@ -459,13 +502,30 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test("400: Responds with an error when passed input without an inc_votes key", () => {
+  test("200: Responds with an unchanged article when passed input without an inc_votes key", () => {
     return request(app)
       .patch("/api/articles/1")
       .send({ votes: "100" })
-      .expect(400)
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input: no votes received");
+        const {
+          author,
+          title,
+          article_id,
+          topic,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.article;
+        const articleBody = body.article.body;
+        expect(typeof author).toBe("string");
+        expect(typeof title).toBe("string");
+        expect(article_id).toBe(1);
+        expect(typeof articleBody).toBe("string");
+        expect(typeof topic).toBe("string");
+        expect(typeof created_at).toBe("string");
+        expect(votes).toBe(100);
+        expect(typeof article_img_url).toBe("string");
       });
   });
 });
@@ -481,10 +541,10 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
-  test("400: Responds with error when passed a non-existent comment ID", () => {
+  test("404: Responds with error when passed a non-existent comment ID", () => {
     return request(app)
       .delete("/api/comments/9090")
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe(
           "Invalid input: no comment to delete with comment_id: 9090"
@@ -598,9 +658,9 @@ describe("POST /api/articles", () => {
         article_img_url:
           "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
       })
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input");
+        expect(body.msg).toBe("Invalid input: Unable to find matching record");
       });
   });
   test("400: Responds with an error when passed a blank user", () => {
@@ -755,9 +815,9 @@ describe("POST /api/articles", () => {
         article_img_url:
           "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
       })
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input");
+        expect(body.msg).toBe("Invalid input: Unable to find matching record");
       });
   });
   test("400: Responds with an error when passed a blank topic", () => {
