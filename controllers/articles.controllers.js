@@ -1,7 +1,7 @@
 const {
   fetchArticles,
   fetchArticleById,
-  changeVotes,
+  changeArticleVotes,
 } = require("../models/articles.models.js");
 const { fetchTopic } = require("../models/topics.models.js");
 
@@ -37,7 +37,7 @@ const getArticleById = (request, response, next) => {
 const patchArticleById = (request, response, next) => {
   const { article_id } = request.params;
   const { inc_votes } = request.body;
-  changeVotes(article_id, inc_votes)
+  changeArticleVotes(article_id, inc_votes)
     .then((article) => {
       response.status(201).send({ article });
     })

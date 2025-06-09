@@ -27,7 +27,8 @@ Error handling is incorporated, and the repo includes test scripts.
 | GET    | `/api/articles/:article_id/comments` | Get all comments for an article                                                 |
 | POST   | `/api/articles/:article_id/comments` | Add a comment for an article                                                    |
 | PATCH  | `/api/articles/:article_id`          | Update the votes on an article by its ID                                        |
-| DELETE | `/api/comments/:comment_id`          | Delete a comment by its id                                                      |
+| PATCH  | `/api/comments/:comment_id`          | Update the votes on a comment by its ID                                         |
+| DELETE | `/api/comments/:comment_id`          | Delete a comment by its ID                                                      |
 
 ## Setup Guide
 

@@ -52,8 +52,33 @@ const eraseComment = (comment_id) => {
     });
 };
 
+const changeCommentVotes = (comment_id, inc_votes) => {
+  if (inc_votes === undefined) {
+    return Promise.reject({
+      status: 400,
+      msg: "Invalid input: no votes received",
+    });
+  }
+  return db
+    .query(
+      "UPDATE comments SET votes = votes + $2 WHERE comment_id = $1 RETURNING *",
+      [comment_id, inc_votes]
+    )
+    .then(({ rows }) => {
+      const comment = rows[0];
+      if (!comment) {
+        return Promise.reject({
+          status: 400,
+          msg: `No comment found for comment_id: ${comment_id}`,
+        });
+      }
+      return comment;
+    });
+};
+
 module.exports = {
   fetchCommentsbyArticle,
   insertComment,
   eraseComment,
+  changeCommentVotes,
 };

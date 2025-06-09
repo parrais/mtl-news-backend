@@ -113,6 +113,18 @@
       }
     }
   },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Submits votes to a comment by its id",
+    "exampleRequest": { "inc_votes": 1 },
+    "exampleResponse": {
+      "comment_id": 89,
+      "article_id": 1,
+      "body": "Comment body",
+      "votes": 3,
+      "author": "cooljmessy",
+      "created_at": "2020-10-24T06:08:00.000Z"
+    }
+  },
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes a comment by its id (no content in response)"
   }

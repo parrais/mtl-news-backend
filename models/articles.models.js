@@ -69,7 +69,7 @@ const fetchArticleById = (article_id) => {
     });
 };
 
-const changeVotes = (article_id, inc_votes) => {
+const changeArticleVotes = (article_id, inc_votes) => {
   if (inc_votes === undefined) {
     return Promise.reject({
       status: 400,
@@ -96,5 +96,5 @@ const changeVotes = (article_id, inc_votes) => {
 module.exports = {
   fetchArticles,
   fetchArticleById,
-  changeVotes,
+  changeArticleVotes,
 };

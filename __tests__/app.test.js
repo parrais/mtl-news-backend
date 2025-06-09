@@ -492,3 +492,59 @@ describe("DELETE /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("PATCH /api/comments/:comment_id", () => {
+  test("PATCH - 201: Updates votes on a comment", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: 200 })
+      .expect(201)
+      .then(({ body }) => {
+        const { comment_id, article_id, votes, author, created_at } =
+          body.comment;
+        const commentBody = body.comment.body;
+        expect(comment_id).toBe(4);
+        expect(typeof article_id).toBe("number");
+        expect(typeof commentBody).toBe("string");
+        expect(votes).toBe(100);
+        expect(typeof author).toBe("string");
+        expect(typeof created_at).toBe("string");
+      });
+  });
+  test("400: Responds with an error when passed a comment ID not found in the database", () => {
+    return request(app)
+      .patch("/api/comments/456")
+      .send({ inc_votes: 100 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comment found for comment_id: 456");
+      });
+  });
+  test("400: Responds with an error when passed an invalid comment ID", () => {
+    return request(app)
+      .patch("/api/comments/nothere")
+      .send({ inc_votes: 100 })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed an invalid vote total", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ inc_votes: "ballots" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed input without an inc_votes key", () => {
+    return request(app)
+      .patch("/api/comments/4")
+      .send({ votes: "100" })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input: no votes received");
+      });
+  });
+});
