@@ -216,6 +216,27 @@ describe("GET /api/users", () => {
       });
   });
 });
+describe("GET /api/users/:username", () => {
+  test("200: Responds with a users by their username when valid", () => {
+    return request(app)
+      .get("/api/users/rogersop")
+      .expect(200)
+      .then(({ body }) => {
+        const { username, avatar_url, name } = body.user;
+        expect(username).toBe("rogersop");
+        expect(typeof name).toBe("string");
+        expect(typeof avatar_url).toBe("string");
+      });
+  });
+  test("404: Responds with an error when passed an unknown username", () => {
+    return request(app)
+      .get("/api/users/nothere")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No user found for username: nothere");
+      });
+  });
+});
 describe("GET /api/articles/:article_id", () => {
   test("200: Responds with an article by its id when valid", () => {
     return request(app)

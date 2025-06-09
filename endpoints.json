@@ -40,6 +40,16 @@
       ]
     }
   },
+  "GET /api/users/:username": {
+    "description": "Serves an individual user by their username",
+    "exampleResponse": {
+      "user": {
+        "username": "user123",
+        "name": "Arthur Smithee",
+        "avatar_url": "https://openclipart.org/image/800px/250860"
+      }
+    }
+  },
   "GET /api/articles/:article_id": {
     "description": "Serves an individual article by its id",
     "exampleResponse": {

@@ -21,6 +21,7 @@ Error handling is incorporated, and the repo includes test scripts.
 | GET    | `/api`                               | Documentation of available API endpoints                                        |
 | GET    | `/api/topics`                        | Get all topics                                                                  |
 | GET    | `/api/users`                         | Get all users                                                                   |
+| GET    | `/api/users/:username`               | Get a user by their username                                                    |
 | GET    | `/api/articles`                      | Get all articles (sorting asc/desc by columns and filtering by topic available) |
 | GET    | `/api/articles/:article_id`          | Get an article by its ID                                                        |
 | GET    | `/api/articles/:article_id/comments` | Get all comments for an article                                                 |
