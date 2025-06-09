@@ -916,3 +916,77 @@ describe("POST /api/articles", () => {
       });
   });
 });
+describe("POST /api/topics", () => {
+  test("POST - 201: Adds a new topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "NewTopic",
+        description: "New description",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const { slug, description } = body.topic;
+        expect(slug).toBe("NewTopic");
+        expect(description).toBe("New description");
+      });
+  });
+  test("POST - 400: Fails to add a new topic when the topic already exists", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "cats",
+        description: "New description",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("POST - 400: Fails to add a new topic when the topic is blank", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "",
+        description: "New description",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("POST - 400: Fails to add a new topic when the topic field is missing", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        description: "New description",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("POST - 400: Fails to add a new topic when the description is blank", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "cats",
+        description: "",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("POST - 400: Fails to add a new topic when the description is missing", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({
+        slug: "cats",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+});

@@ -25,6 +25,7 @@ Error handling is incorporated, and the repo includes test scripts.
 | GET    | `/api/articles`                      | Get all articles (sorting asc/desc by columns and filtering by topic available) |
 | GET    | `/api/articles/:article_id`          | Get an article by its ID                                                        |
 | GET    | `/api/articles/:article_id/comments` | Get all comments for an article                                                 |
+| POST   | `/api/topics`                        | Add a new topic                                                                 |
 | POST   | `/api/articles`                      | Add a new article                                                               |
 | POST   | `/api/articles/:article_id/comments` | Add a comment for an article                                                    |
 | PATCH  | `/api/articles/:article_id`          | Update the votes on an article by its ID                                        |

@@ -16,4 +16,28 @@ const fetchTopic = (topic) => {
     });
 };
 
-module.exports = { fetchTopics, fetchTopic };
+const insertTopic = (slug, description) => {
+  if (
+    typeof slug !== "string" ||
+    !slug ||
+    typeof description !== "string" ||
+    !description
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: `Invalid input`,
+    });
+  }
+
+  return db
+    .query(
+      `INSERT INTO topics(slug, description) VALUES ($1, $2) RETURNING *`,
+      [slug, description]
+    )
+    .then(({ rows }) => {
+      const topic = rows[0];
+      return topic;
+    });
+};
+
+module.exports = { fetchTopics, fetchTopic, insertTopic };

@@ -8,6 +8,13 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "POST /api/topics": {
+    "description": "Adds a new topics",
+    "exampleRequest": { "slug": "rugby", "description": "Rugger!" },
+    "exampleResponse": {
+      "Topic": { "slug": "rugby", "description": "Rugger!" }
+    }
+  },
   "GET /api/articles": {
     "description": "Serves an array of all articles",
     "queries": {
