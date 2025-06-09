@@ -548,3 +548,371 @@ describe("PATCH /api/comments/:comment_id", () => {
       });
   });
 });
+
+describe("POST /api/articles", () => {
+  test("POST - 201: Posts a new article", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const {
+          author,
+          title,
+          article_id,
+          topic,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.newArticle;
+        const articleBody = body.newArticle.body;
+        expect(author).toBe("icellusedkars");
+        expect(title).toBe("This is a new test article.");
+        expect(typeof article_id).toBe("number");
+        expect(articleBody).toBe(
+          "This article has no purpose other than to carry out a test."
+        );
+        expect(topic).toBe("cats");
+        expect(typeof created_at).toBe("string");
+        expect(typeof votes).toBe("number");
+        expect(article_img_url).toBe(
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg"
+        );
+      });
+  });
+  test("400: Responds with an error when passed a user not found in the database", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "notvalid",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed a blank user", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed an invalid user", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: 5,
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed no user", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed a blank title", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed an invalid title", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: 5,
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed no title", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed a blank body", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed an invalid body", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: 5,
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed no body", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        topic: "cats",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed a topic not found in the database", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "fish",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed a blank topic", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed an invalid topic", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: 5,
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("400: Responds with an error when passed no topic", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        article_img_url:
+          "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("POST - 201: Posts a new article with a default image when field blank", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url: "",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const {
+          author,
+          title,
+          article_id,
+          topic,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.newArticle;
+        const articleBody = body.newArticle.body;
+        expect(author).toBe("icellusedkars");
+        expect(title).toBe("This is a new test article.");
+        expect(typeof article_id).toBe("number");
+        expect(articleBody).toBe(
+          "This article has no purpose other than to carry out a test."
+        );
+        expect(topic).toBe("cats");
+        expect(typeof created_at).toBe("string");
+        expect(typeof votes).toBe("number");
+        expect(article_img_url).toBe(
+          "https://upload.wikimedia.org/wikipedia/commons/1/1d/Breaking_News-Alert.png"
+        );
+      });
+  });
+
+  test("POST - 201: Posts a new article with a default image when field not present", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const {
+          author,
+          title,
+          article_id,
+          topic,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.newArticle;
+        const articleBody = body.newArticle.body;
+        expect(author).toBe("icellusedkars");
+        expect(title).toBe("This is a new test article.");
+        expect(typeof article_id).toBe("number");
+        expect(articleBody).toBe(
+          "This article has no purpose other than to carry out a test."
+        );
+        expect(topic).toBe("cats");
+        expect(typeof created_at).toBe("string");
+        expect(typeof votes).toBe("number");
+        expect(article_img_url).toBe(
+          "https://upload.wikimedia.org/wikipedia/commons/1/1d/Breaking_News-Alert.png"
+        );
+      });
+  });
+  test("POST - 201: Posts a new article with a default image when field invalid", () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+        author: "icellusedkars",
+        title: "This is a new test article.",
+        body: "This article has no purpose other than to carry out a test.",
+        topic: "cats",
+        article_img_url: 5,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        const {
+          author,
+          title,
+          article_id,
+          topic,
+          created_at,
+          votes,
+          article_img_url,
+        } = body.newArticle;
+        const articleBody = body.newArticle.body;
+        expect(author).toBe("icellusedkars");
+        expect(title).toBe("This is a new test article.");
+        expect(typeof article_id).toBe("number");
+        expect(articleBody).toBe(
+          "This article has no purpose other than to carry out a test."
+        );
+        expect(topic).toBe("cats");
+        expect(typeof created_at).toBe("string");
+        expect(typeof votes).toBe("number");
+        expect(article_img_url).toBe(
+          "https://upload.wikimedia.org/wikipedia/commons/1/1d/Breaking_News-Alert.png"
+        );
+      });
+  });
+});

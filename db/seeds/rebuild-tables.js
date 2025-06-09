@@ -45,7 +45,7 @@ exports.createTables = () => {
       return db.query(`CREATE TABLE articles(
       article_id SERIAL PRIMARY KEY,
       title VARCHAR(200) NOT NULL,
-      topic VARCHAR(20) REFERENCES topics(slug),
+      topic VARCHAR(20) NOT NULL REFERENCES topics(slug),
       author VARCHAR(20) NOT NULL REFERENCES users(username),
       body TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

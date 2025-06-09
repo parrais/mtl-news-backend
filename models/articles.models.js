@@ -93,8 +93,36 @@ const changeArticleVotes = (article_id, inc_votes) => {
     });
 };
 
+const insertArticle = (author, title, body, topic, article_img_url) => {
+  if (
+    typeof title !== "string" ||
+    title === "" ||
+    typeof body !== "string" ||
+    body === ""
+  ) {
+    return Promise.reject({
+      status: 400,
+      msg: `Invalid input`,
+    });
+  }
+  if (!article_img_url || typeof article_img_url !== "string") {
+    article_img_url =
+      "https://upload.wikimedia.org/wikipedia/commons/1/1d/Breaking_News-Alert.png";
+  }
+  return db
+    .query(
+      `INSERT INTO articles(author, title, body, topic, article_img_url) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [author, title, body, topic, article_img_url]
+    )
+    .then(({ rows }) => {
+      const newArticle = rows[0];
+      return newArticle;
+    });
+};
+
 module.exports = {
   fetchArticles,
   fetchArticleById,
   changeArticleVotes,
+  insertArticle,
 };
