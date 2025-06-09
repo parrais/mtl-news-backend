@@ -1,21 +1,9 @@
 const express = require("express");
 const app = express();
+const apiRouter = require("./routes/api-router");
 const {
-  getEndpoints,
   respondToInvalidEndpoint,
 } = require("./controllers/api.controllers.js");
-const {
-  getArticles,
-  getArticleById,
-  patchArticleById,
-} = require("./controllers/articles.controllers.js");
-const {
-  getCommentsbyArticle,
-  postComment,
-  deleteComment,
-} = require("./controllers/comments.controllers.js");
-const { getTopics } = require("./controllers/topics.controllers.js");
-const { getUsers } = require("./controllers/users.controllers.js");
 const {
   handleCustomErrors,
   handleDatabaseErrors,
@@ -24,19 +12,7 @@ const {
 
 app.use(express.json());
 
-app.get("/api", getEndpoints);
-
-app.get("/api/articles", getArticles);
-app.get("/api/articles/:article_id", getArticleById);
-app.patch("/api/articles/:article_id", patchArticleById);
-
-app.get("/api/articles/:article_id/comments", getCommentsbyArticle);
-app.post("/api/articles/:article_id/comments", postComment);
-app.delete("/api/comments/:comment_id", deleteComment);
-
-app.get("/api/topics", getTopics);
-
-app.get("/api/users", getUsers);
+app.use("/api", apiRouter);
 
 app.use(respondToInvalidEndpoint);
 

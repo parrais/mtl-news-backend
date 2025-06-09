@@ -49,6 +49,5 @@ const patchArticleById = (request, response, next) => {
 module.exports = {
   getArticles,
   getArticleById,
-
   patchArticleById,
 };
