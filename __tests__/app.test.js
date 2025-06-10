@@ -631,6 +631,7 @@ describe("POST /api/articles", () => {
           created_at,
           votes,
           article_img_url,
+          comment_count,
         } = body.newArticle;
         const articleBody = body.newArticle.body;
         expect(author).toBe("icellusedkars");
@@ -645,6 +646,7 @@ describe("POST /api/articles", () => {
         expect(article_img_url).toBe(
           "https://upload.wikimedia.org/wikipedia/commons/9/98/Breaking-news-.jpg"
         );
+        expect(typeof comment_count).toBe("number");
       });
   });
   test("400: Responds with an error when passed a user not found in the database", () => {

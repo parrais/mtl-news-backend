@@ -120,7 +120,15 @@ const insertArticle = (author, title, body, topic, article_img_url) => {
       [author, title, body, topic, article_img_url]
     )
     .then(({ rows }) => {
+      const newArticleId = rows[0].article_id;
+      return db.query(
+        "SELECT articles.author, articles.title, articles.article_id, articles.body, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id) AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id",
+        [newArticleId]
+      );
+    })
+    .then(({ rows }) => {
       const newArticle = rows[0];
+      newArticle.comment_count = Number(newArticle.comment_count);
       return newArticle;
     });
 };
