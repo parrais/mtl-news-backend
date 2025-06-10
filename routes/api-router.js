@@ -1,3 +1,4 @@
+const express = require("express");
 const apiRouter = require("express").Router();
 const articlesRouter = require("./articles-router");
 const commentsRouter = require("./comments-router");
@@ -10,6 +11,6 @@ apiRouter.use("/comments", commentsRouter);
 apiRouter.use("/topics", topicsRouter);
 apiRouter.use("/users", usersRouter);
 
-apiRouter.get("/", getEndpoints);
+apiRouter.use("/", express.static("public"));
 
 module.exports = apiRouter;

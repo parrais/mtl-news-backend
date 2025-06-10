@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MTL News Server API</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header id="top">
+      <h1>MTL News Server API</h1>
+      <p>Documentation on endpoints for the MTL News Server.</p>
+      <p>
+        For information on running a new instance of this application, please
+        consult the
+        <a href="https://github.com/parrais/mtl-news-backend">GitHub repo</a>.
+      </p>
+    </header>
+    <hr />
+    <main>
+      <nav id="index">
+        <h2>Available Endpoints</h2>
+        <!-- prettier-ignore -->
+        <ul>
+          <li><a href="#get-api">GET /api</a></li>
+          <li><a href="#get-api-topics">GET /api/topics</a></li>
+          <li><a href="#get-api-users">GET /api/users</a></li>
+          <li><a href="#get-api-users-id">GET /api/users/:username</a></li>
+          <li><a href="#get-api-articles">GET /api/articles</a></li>
+          <li><a href="#get-api-articles-id">GET /api/articles/:article_id</a></li>
+          <li><a href="#get-api-articles-id-comments">GET /api/articles/:article_id/comments</a></li>
+          <li><a href="#post-api-topics">POST /api/topics</a></li>
+          <li><a href="#post-api-articles">POST /api/articles</a></li>
+          <li><a href="#post-api-articles-id-comments">POST /api/articles/:article_id/comments</a></li>
+          <li><a href="#patch-api-articles-id">PATCH /api/articles/:article_id</a></li>
+          <li><a href="#patch-api-comments-id">PATCH /api/comments/:comment_id</a></li>
+          <li><a href="#delete-api-comments-id">DELETE /api/comments/:comment_id</a></li>
+        </ul>
+      </nav>
+      <hr />
+      <section id="get-api">
+        <h2>GET /api</h2>
+        <p>
+          This endpoint provides documentation detailing all of the available
+          API endpoints.
+        </p>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="get-api-topics">
+        <h2>GET /api/topics</h2>
+        <p>This endpoint provides a list of all topics.</p>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "topics": [
+                { "slug": "football", "description": "Footie!" },
+                { "slug": "cats", "description": "Domestic feline creatures." },
+            ]
+        }
+        </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="get-api-users">
+        <h2>GET /api/users</h2>
+        <p>This endpoint provides a list of all users.</p>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "users": [
+                {"username": "user123", "name": "Arthur Smithee", "avatar_url": "https://openclipart.org/image/800px/250860"},
+                {"username": "user456", "name": "Jack Jones", "avatar_url": "https://openclipart.org/image/800px/250860"},
+            ]
+        }
+    </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="get-api-users-id">
+        <h2>GET /api/users/:username</h2>
+        <p>
+          This endpoint returns details of an inidivual user, specified by their
+          <code>username</code>.
+        </p>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "user": {
+                "username": "user123",
+                "name": "Arthur Smithee",
+                "avatar_url": "https://openclipart.org/image/800px/250860"
+            }
+        }
+    </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="get-api-articles">
+        <h2>GET /api/articles</h2>
+        <p>This endpoint provides a list of all articles.</p>
+        <h3>Queries</h3>
+        <p>This endpoint takes the following query options:</p>
+        <ul>
+          <li>
+            <code>sort_by</code> any column (defaults to
+            <code>created_at</code>)
+          </li>
+          <li>
+            <code>order</code> by <code>asc</code> (ascending) or
+            <code>desc</code> (descending) (defaults to <code>desc</code>)
+          </li>
+          <li>
+            <code>topic</code> to filter by a topic, specified by its
+            <code>slug</code> (defaults to all topics)
+          </li>
+        </ul>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "articles": [
+                {
+                    "author": "weegembump",
+                    "title": "Sunday league football",
+                    "article_id": 23
+                    "topic": "football",
+                    "created_at": "2020-03-22 14:25:00",
+                    "votes": 5,
+                    "article_img_url": "ttps://images.pexels.com/photos/774321/pexels-photo-774321.jpeg?w=700&h=700"
+                    "comment_count": 3
+                },
+                {
+                    "author": "weegembump",
+                    "title": "Seafood substitutions are increasing",
+                    "article_id": 33
+                    "topic": "cooking",
+                    "created_at": "2018-05-30T15:59:13.341Z",
+                    "votes": 0,
+                    "article_img_url": "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?w=700&h=700"
+                    "comment_count": 6
+                }
+            ]
+        }
+    </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="get-api-articles-id">
+        <h2>GET /api/articles/:article_id</h2>
+        <p>
+          This endpoint returns details of an inidivual article, specified by
+          its <code>article_id</code>.
+        </p>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "article": {
+                "author": "weegembump",
+                "title": "Brian Clough - In The Top One",
+                "article_id": 12345,
+                "body": "Brian Clough was almost certainly the greatest English manager not to manage the national side.
+                 His success at Derby County, leading to them becoming champions of England, was followed by...",
+                "topic": "football",
+                "created_at": "2025-06-04T15:59:13.341Z",
+                "votes": 72,
+                "article_img_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Clough_and_Taylor_Statue_Derby.JPG",
+                "comment_count": 55
+            }
+        }
+    </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="get-api-articles-id-comments">
+        <h2>GET /api/articles/:article_id/comments</h2>
+        <p>
+          This endpoint returns an array of all comments on an inidivual
+          article, specified by its <code>article_id</code>, newest first.
+        </p>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "comments": [
+                {
+                    "comment_id": 45678,
+                    "votes": 1972,
+                    "created_at": "2025-06-04T21:59:13.341Z",
+                    "author": "weegembump",
+                    "body": "This article focuses too much on his managerial days and not Clough's earlier life as a child and player",
+                    "article_id": 12345
+                },
+                {
+                    "comment_id": 45677,
+                    "votes": 0,
+                    "created_at": "2025-06-04T20:59:13.341Z",
+                    "author": "jessjelly",
+                    "body": "A great article, even though I don't like football much!",
+                    "article_id": 12345
+                },
+            ]
+        }
+    </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="post-api-topics">
+        <h2>POST /api/topics</h2>
+        <p>
+          This endpoint adds a new topic and on success, returns the new topic.
+        </p>
+        <h3>Input format</h3>
+        <pre><code>
+        {
+            "slug": "rugby",
+            "description": "A gentleman's sport"
+        }
+        </code></pre>
+        <h3>Sample output</h3>
+        <pre><samp>
+        { "topic": { "slug": "rugby", "description": "A gentleman's sport" } }
+        </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="post-api-articles">
+        <h2>POST /api/articles</h2>
+        <p>
+          This endpoint adds a new article and on success, returns the new
+          article.
+        </p>
+        <h3>Input format</h3>
+        <pre><code>
+        {
+            "author": "weegembump",
+            "title": "Brian Clough - In The Top One",
+            "body": "Brian Clough was almost certainly the greatest English manager not to manage the national side.
+            His success at Derby County, leading to them becoming champions of England, was followed by...",
+            "topic": "football",
+            "article_img_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Clough_and_Taylor_Statue_Derby.JPG"
+        }
+        </code></pre>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "newArticle": {
+                "author": "weegembump",
+                "title": "Brian Clough - In The Top One",
+                "article_id": 12345,
+                "body": "Brian Clough was almost certainly the greatest English manager not to manage the national side.
+                His success at Derby County, leading to them becoming champions of England, was followed by...",
+                "topic": "football",
+                "created_at": "2025-06-04T15:59:13.341Z",
+                "votes": 0,
+                "article_img_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Clough_and_Taylor_Statue_Derby.JPG",
+                "comment_count": 0
+            }
+        }
+        </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="post-api-articles-id-comments">
+        <h2>POST /api/articles/:article_id/comments</h2>
+        <p>
+          This endpoint post a new comment on an article, specified by its
+          <code>article_id</code>.
+        </p>
+        <h3>Input format</h3>
+        <pre><code>
+        {
+            "username": "jessjelly",
+            "body": "More articles like this please!"
+        }
+        </code></pre>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "newComment": {
+                "comment_id": 45680,
+                "votes": 0,
+                "created_at": "2025-06-04T22:59:13.341Z",
+                "author": "jessjelly",
+                "body": "More articles like this please!",
+                "article_id": 12345
+            }
+        }
+        </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="patch-api-articles-id">
+        <h2>PATCH /api/articles/:article_id</h2>
+        <p>
+          This endpoint adds a number of votes (positive or negative) to an
+          existing article, specified by its <code>article_id</code>, and
+          outputs the updated article.
+        </p>
+        <h3>Input format</h3>
+        <pre><code>
+        { inc_votes : 1 }
+        </code></pre>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "article": {
+                "author": "weegembump",
+                "title": "Brian Clough - In The Top One",
+                "article_id": 12345,
+                "body": "Brian Clough was almost certainly the greatest English manager not to manage the national side.
+                His success at Derby County, leading to them becoming champions of England, was followed by...",
+                "topic": "football",
+                "created_at": "2025-06-04T15:59:13.341Z",
+                "votes": 101,
+                "article_img_url": "https://upload.wikimedia.org/wikipedia/commons/0/0b/Clough_and_Taylor_Statue_Derby.JPG",
+            }
+        }
+        </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="patch-api-comments-id">
+        <h2>PATCH /api/comments/:comment_id</h2>
+        <p>
+          This endpoint adds a number of votes (positive or negative) to an
+          existing comment, specified by its <code>comment_id</code>, and
+          outputs the updated comment.
+        </p>
+        <h3>Input format</h3>
+        <pre><code>
+        { inc_votes : -1 }
+        </code></pre>
+        <h3>Sample output</h3>
+        <pre><samp>
+        {
+            "comment": {
+                "comment_id": 45680,
+                "votes": -1,
+                "created_at": "2025-06-04T22:59:13.341Z",
+                "author": "jessjelly",
+                "body": "More articles like this please!",
+                "article_id": 12345
+            }
+        }
+        </samp></pre>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+      <hr />
+      <section id="delete-api-comments-id">
+        <h2>DELETE /api/comments/:comment_id</h2>
+        <p>
+          This endpoint deletes an existing comment, specified by its
+          <code>comment_id</code>, and returns no content (status code: 204).
+        </p>
+        <p class="nav"><a href="#index">Back to list</a></p>
+      </section>
+    </main>
+    <hr />
+    <footer>
+      <p>
+        Maintained by
+        <a href="https://www.linkedin.com/in/mattlewisuk/">Matt Lewis</a> aka
+        <a href="https://github.com/parrais">parrais</a>
+      </p>
+      <p class="nav"><a href="#top">Back to top</a></p>
+    </footer>
+  </body>
+</html>

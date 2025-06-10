@@ -14,12 +14,12 @@ afterAll(() => {
 });
 
 describe("GET /api", () => {
-  test("200: Responds with an object detailing the documentation for each endpoint", () => {
+  test("200: Responds with an HTML page detailing the documentation for each endpoint", () => {
     return request(app)
-      .get("/api")
+      .get("/api/")
       .expect(200)
-      .then(({ body: { endpoints } }) => {
-        expect(endpoints).toEqual(endpointsJson);
+      .then((returned) => {
+        expect(returned.header["content-type"]).toContain("text/html");
       });
   });
   test("404: Responds with an error when requesting an invalid endpoint under /api", () => {
