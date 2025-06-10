@@ -12,7 +12,7 @@
     "description": "Adds a new topics",
     "exampleRequest": { "slug": "rugby", "description": "Rugger!" },
     "exampleResponse": {
-      "Topic": { "slug": "rugby", "description": "Rugger!" }
+      "topic": { "slug": "rugby", "description": "Rugger!" }
     }
   },
   "GET /api/articles": {

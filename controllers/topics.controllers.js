@@ -7,7 +7,7 @@ const getTopics = (request, response) => {
 };
 
 const postTopic = (request, response, next) => {
-  const { slug, description } = request.body;
+  const { slug, description } = request.body || { slug: "", description: "" };
   insertTopic(slug, description)
     .then((topic) => {
       response.status(201).send({ topic });

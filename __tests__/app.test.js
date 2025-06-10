@@ -867,6 +867,15 @@ describe("POST /api/articles", () => {
         expect(body.msg).toBe("Invalid input");
       });
   });
+  test("400: Responds with an error when passed no data", () => {
+    return request(app)
+      .post("/api/articles")
+      .send()
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
   test("POST - 201: Posts a new article with a default image when field blank", () => {
     return request(app)
       .post("/api/articles")
@@ -1044,6 +1053,15 @@ describe("POST /api/topics", () => {
       .send({
         slug: "cats",
       })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  test("POST - 400: Fails to add a new topic when new object passed", () => {
+    return request(app)
+      .post("/api/topics")
+      .send()
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid input");

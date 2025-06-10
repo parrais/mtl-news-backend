@@ -48,7 +48,13 @@ const patchArticleById = (request, response, next) => {
 };
 
 const postArticle = (request, response, next) => {
-  const { author, title, body, topic, article_img_url } = request.body;
+  const { author, title, body, topic, article_img_url } = request.body || {
+    author: "",
+    title: "",
+    body: "",
+    topic: "",
+    article_img_url: "",
+  };
   insertArticle(author, title, body, topic, article_img_url)
     .then((newArticle) => {
       response.status(201).send({ newArticle });
