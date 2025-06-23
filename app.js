@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const apiRouter = require("./routes/api-router");
 const {
   respondToInvalidEndpoint,
@@ -9,6 +10,8 @@ const {
   handleDatabaseErrors,
   handleServerErrors,
 } = require("./errors.js");
+
+app.use(cors());
 
 app.use(express.json());
 
