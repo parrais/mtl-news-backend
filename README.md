@@ -1,6 +1,6 @@
 # MTL News Server
 
-[MTL News Server backend API](https://mtl-news-backend.onrender.com/)
+[MTL News Server backend API](https://mtl-news-backend.onrender.com/api)
 
 ## Summary
 
@@ -13,6 +13,8 @@ This project is a simple news server API, written in JavaScript and accessing a 
 - Votes on articles
 
 Error handling is incorporated, and the repo includes test scripts.
+
+A front-end web application that complements this server-side deployment can be found here: [MTL News Front-End](https://github.com/parrais/mtl-news)
 
 ## Endpoints
 
