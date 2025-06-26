@@ -171,6 +171,28 @@ describe("GET /api/articles", () => {
         expect(articles[12].article_id).toBe(13);
       });
   });
+  test("200: Accepts a sort_by query which responds with sorted results on comment_count, ordered descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].article_id).toBe(1);
+        expect(articles[0].comment_count).toBe(11);
+        expect(articles[12].comment_count).toBe(0);
+      });
+  });
+  test("200: Accepts a sort_by query which responds with sorted results on comment_count, ordered ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=comment_count&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles[0].comment_count).toBe(0);
+        expect(articles[12].article_id).toBe(1);
+        expect(articles[12].comment_count).toBe(11);
+      });
+  });
   test("200: Accepts a sort_by query which responds with sorted results on numeric field, ordered ascending, with topic", () => {
     return request(app)
       .get("/api/articles?sort_by=article_id&order=asc&topic=mitch")

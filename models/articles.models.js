@@ -34,7 +34,12 @@ const fetchArticles = ({ sort_by, order, topic }) => {
     queryString += `WHERE topic = $${queryParams.length} `;
   }
 
-  queryString += "GROUP BY articles.article_id ORDER BY articles.%I";
+  if (sort_by === "comment_count") {
+    queryString +=
+      "GROUP BY articles.article_id ORDER BY COUNT(comments.comment_id)";
+  } else {
+    queryString += "GROUP BY articles.article_id ORDER BY articles.%I";
+  }
 
   if (order === "asc") {
     queryString += " ASC;";
