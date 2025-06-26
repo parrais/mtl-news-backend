@@ -4,10 +4,10 @@ const format = require("pg-format");
 const fetchArticles = ({ sort_by, order, topic }) => {
   const DEFAULT_SORT_COLUMN = "created_at";
   const DEFAULT_ORDER = "desc";
-  if (sort_by === undefined) {
+  if (sort_by === undefined || sort_by === "") {
     sort_by = DEFAULT_SORT_COLUMN;
   }
-  if (order === undefined) {
+  if (order === undefined || order === "") {
     order = DEFAULT_ORDER;
   }
   const allowedSortColumns = [
