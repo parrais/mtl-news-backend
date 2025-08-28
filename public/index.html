@@ -3,11 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <title>MTL News Server API</title>
-    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.violet.min.css"
+    />
   </head>
   <body>
-    <header id="top">
+    <header class="container" id="top">
       <h1>MTL News Server API</h1>
       <p>Documentation on endpoints for the MTL News Server.</p>
       <p>
@@ -15,10 +19,10 @@
         consult the
         <a href="https://github.com/parrais/mtl-news-backend">GitHub repo</a>.
       </p>
+      <hr />
     </header>
-    <hr />
-    <main>
-      <nav id="index">
+    <main class="container">
+      <section id="index">
         <h2>Available Endpoints</h2>
         <!-- prettier-ignore -->
         <ul>
@@ -48,7 +52,7 @@
             <li><a href="#delete-api-comments-id">DELETE /api/comments/:comment_id</a></li>
            </ul>
         </ul>
-      </nav>
+      </section>
       <hr />
       <section id="get-api">
         <h2>GET /api</h2>
@@ -56,7 +60,9 @@
           This endpoint provides documentation detailing all of the available
           API endpoints.
         </p>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="get-api-topics">
@@ -71,7 +77,9 @@
             ]
         }
         </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="get-api-users">
@@ -86,7 +94,9 @@
             ]
         }
     </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="get-api-users-id">
@@ -105,7 +115,9 @@
             }
         }
     </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="get-api-articles">
@@ -154,7 +166,9 @@
             ]
         }
     </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="get-api-articles-id">
@@ -180,7 +194,9 @@
             }
         }
     </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="get-api-articles-id-comments">
@@ -212,7 +228,9 @@
             ]
         }
     </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="post-api-topics">
@@ -231,7 +249,9 @@
         <pre><samp>
         { "topic": { "slug": "rugby", "description": "A gentleman's sport" } }
         </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="post-api-articles">
@@ -268,7 +288,9 @@
             }
         }
         </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="post-api-articles-id-comments">
@@ -297,7 +319,9 @@
             }
         }
         </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="patch-api-articles-id">
@@ -327,7 +351,9 @@
             }
         }
         </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="patch-api-comments-id">
@@ -354,7 +380,9 @@
             }
         }
         </samp></pre>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
       <hr />
       <section id="delete-api-comments-id">
@@ -363,17 +391,21 @@
           This endpoint deletes an existing comment, specified by its
           <code>comment_id</code>, and returns no content (status code: 204).
         </p>
-        <p class="nav"><a href="#index">Back to list</a></p>
+        <p class="nav">
+          <small><a href="#index" class="secondary">Back to list</a></small>
+        </p>
       </section>
     </main>
-    <hr />
-    <footer>
+    <footer class="container">
+      <hr />
       <p>
         Maintained by
         <a href="https://www.linkedin.com/in/mattlewisuk/">Matt Lewis</a> aka
         <a href="https://github.com/parrais">parrais</a>
       </p>
-      <p class="nav"><a href="#top">Back to top</a></p>
+      <p class="nav">
+        <small><a href="#top" class="secondary">Back to top</a></small>
+      </p>
     </footer>
   </body>
 </html>
